@@ -1,6 +1,6 @@
 {
   "name": "webext-launch-web-auth-flow",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A launchWebAuthFlow polyfill using browser popup",
   "author": "eight04 <eight04@gmail.com>",
   "license": "MIT",
