@@ -2,7 +2,15 @@
 
 async function createWindow(options) {
   if (browser.windows) {
-    return await browser.windows.create(options);
+    try {
+      return await browser.windows.create(options);
+    } catch (err) {
+      // Firefox doesn't support focused
+      if (/focused.*unsupported/i.test(err.message)) {
+        delete options.focused;
+        return await browser.windows.create(options);
+      }
+    }
   }
   const tabOptions = {
     active: options.focused,
@@ -41,10 +49,10 @@ function defer() {
 
 async function launchWebAuthFlow({url, redirect_uri, interactive = false}) {
   const wInfo = await createWindow({
-    // Firefox doesn't support focused
     type: "popup",
     url,
-    state: "minimized"
+    state: "minimized",
+    focused: false
   });
   const windowId = wInfo.id;
   const tabId = wInfo.tabs[0].id;
