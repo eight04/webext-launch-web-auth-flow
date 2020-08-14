@@ -41,6 +41,11 @@ Compatibility
 
 This library references the global `browser`. To make it work on Chrome, you need something like [webextension-polyfill](https://github.com/mozilla/webextension-polyfill)
 
+Known issues
+-------------
+
+* Currently there is no good way to create an "inactive minimized dialog" on both Chrome and Firefox. Ref: https://crbug.com/783827 & https://bugzilla.mozilla.org/show_bug.cgi?id=1659190
+
 API reference
 -------------
 
