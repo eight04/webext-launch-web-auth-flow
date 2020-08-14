@@ -13,14 +13,14 @@
     "postversion": "git push --follow-tags && npm publish"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.4",
-    "@babel/preset-env": "^7.10.4",
-    "@rollup/plugin-babel": "^5.0.4",
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
+    "@rollup/plugin-babel": "^5.2.0",
     "camelcase": "^6.0.0",
-    "eslint": "^7.4.0",
-    "rollup": "^2.21.0",
-    "rollup-plugin-cjs-es": "^1.0.0",
-    "rollup-plugin-terser": "^6.1.0"
+    "eslint": "^7.6.0",
+    "rollup": "^2.25.0",
+    "rollup-plugin-cjs-es": "^1.0.1",
+    "rollup-plugin-terser": "^7.0.0"
   },
   "repository": "eight04/webext-launch-web-auth-flow",
   "files": [
