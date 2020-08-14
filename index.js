@@ -41,20 +41,20 @@ function defer() {
 
 async function launchWebAuthFlow({url, redirect_uri, interactive = false}) {
   const wInfo = await createWindow({
-    focused: false,
+    // Firefox doesn't support focused
     type: "popup",
-    url
+    url,
+    state: "minimized"
   });
   const windowId = wInfo.id;
   const tabId = wInfo.tabs[0].id;
   const {promise, resolve, reject} = defer();
-  const filter = [
-    {
-      urlPrefix: redirect_uri
-    }
-  ];
-  browser.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate, filter);
-  browser.webNavigation.onDOMContentLoaded.addListener(onDOMContentLoaded, filter);
+  browser.webRequest.onBeforeRequest.addListener(onBeforeRequest, {
+    urls: ["*://*/*"],
+    tabId,
+    types: ["main_frame"]
+  }, ["blocking"]);
+  browser.webNavigation.onDOMContentLoaded.addListener(onDOMContentLoaded);
   browser.tabs.onRemoved.addListener(onTabRemoved);
   try {
     return await promise;
@@ -62,16 +62,16 @@ async function launchWebAuthFlow({url, redirect_uri, interactive = false}) {
     cleanup();
   }
   
-  function onBeforeNavigate(details) {
+  function onBeforeRequest(details) {
     if (details.frameId || details.tabId !== tabId) return;
-    // if (!details.url.startsWith(url)) return;
+    if (!details.url.startsWith(redirect_uri)) return;
     resolve(details.url);
   }
   
   function onDOMContentLoaded(details) {
     if (details.frameId || details.tabId !== tabId) return;
     if (interactive) {
-      updateWindow(windowId, tabId, {focused: true}).catch(err => console.error(err));
+      updateWindow(windowId, tabId, {focused: true, state: "normal"}).catch(err => console.error(err));
     } else {
       reject(new Error("User interaction required"));
     }
@@ -85,7 +85,7 @@ async function launchWebAuthFlow({url, redirect_uri, interactive = false}) {
   }
   
   function cleanup() {
-    browser.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate);
+    browser.webNavigation.onBeforeRequest.removeListener(onBeforeRequest);
     browser.webNavigation.onDOMContentLoaded.removeListener(onDOMContentLoaded);
     browser.tabs.onRemoved.removeListener(onTabRemoved);
     closeWindow(windowId, tabId).catch(err => console.error(err));
