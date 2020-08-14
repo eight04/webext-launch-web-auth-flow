@@ -69,6 +69,6 @@ https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/ident
 Changelog
 ---------
 
-* 0.1.0 (Next)
+* 0.1.0 (Aug 15, 2020)
 
   - First release.
