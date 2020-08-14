@@ -66,6 +66,7 @@ async function launchWebAuthFlow({url, redirect_uri, interactive = false}) {
     if (details.frameId || details.tabId !== tabId) return;
     if (!details.url.startsWith(redirect_uri)) return;
     resolve(details.url);
+    return {cancel: true};
   }
   
   function onDOMContentLoaded(details) {
@@ -85,7 +86,7 @@ async function launchWebAuthFlow({url, redirect_uri, interactive = false}) {
   }
   
   function cleanup() {
-    browser.webNavigation.onBeforeRequest.removeListener(onBeforeRequest);
+    browser.webRequest.onBeforeRequest.removeListener(onBeforeRequest);
     browser.webNavigation.onDOMContentLoaded.removeListener(onDOMContentLoaded);
     browser.tabs.onRemoved.removeListener(onTabRemoved);
     closeWindow(windowId, tabId).catch(err => console.error(err));
