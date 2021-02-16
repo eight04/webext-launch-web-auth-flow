@@ -57,14 +57,18 @@ This module exports a single function.
 launchWebAuthFlow({
   url: String,
   redirect_uri: String,
-  interactive?: Boolean = false
+  interactive?: Boolean = false,
+  
+  alwaysUseTab?: Boolean = false,
+  windowOptions?: Object
 }) => finalUrl: String
 ```
 
-You have to pass `redirect_uri` explicitly.
+See the [official document](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/identity/launchWebAuthFlow) for `url`, `redirect_uri`, and `interactive` options. Note that **`redirect_uri` is required** in this library.
 
-See MDN for other arguments:
-https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/identity/launchWebAuthFlow
+By default, this library uses a popup to display the login page. If popups are unavailable (which usually happens on mobile browsers), it uses a tab instead. Set `alwaysUseTab` to `true` to always use a tab.
+
+Use `windowOptions` to set extra properties that will be sent to [`browser.windows.create`](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/windows/create).
 
 Changelog
 ---------
