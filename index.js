@@ -1,7 +1,7 @@
 /* eslint-env webextensions */
 
-async function createWindow(options) {
-  if (browser.windows) {
+async function createWindow(options, useTab) {
+  if (browser.windows && !useTab) {
     return await browser.windows.create(options);
   }
   const tabOptions = {
@@ -39,15 +39,22 @@ function defer() {
   return o;
 }
 
-async function launchWebAuthFlow({url, redirect_uri, interactive = false}) {
+async function launchWebAuthFlow({
+  url,
+  redirect_uri,
+  interactive = false,
+  alwaysUseTab = false,
+  windowOptions
+}) {
   const wInfo = await createWindow({
     type: "popup",
     url,
-    state: "minimized"
+    state: "minimized",
     // https://crbug.com/783827
     // note that Firefox doesn't support focused either
     // focused: false
-  });
+    ...windowOptions
+  }, alwaysUseTab);
   const windowId = wInfo.id;
   const tabId = wInfo.tabs[0].id;
   const {promise, resolve, reject} = defer();
