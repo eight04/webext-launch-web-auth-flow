@@ -73,6 +73,11 @@ Use `windowOptions` to set extra properties that will be sent to [`browser.windo
 Changelog
 ---------
 
+* 0.1.1 (Feb 18, 2021)
+
+  - Add: `alwaysUseTab` option.
+  - Add: `windowOptions` option.
+
 * 0.1.0 (Aug 15, 2020)
 
   - First release.
