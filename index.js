@@ -1,5 +1,20 @@
 /* eslint-env webextensions */
 
+function checkManifestPermissions() {
+  const permissions = [
+    { name: "tabs", value: browser.tabs },
+    { name: "windows", value: browser.windows },
+    { name: "webRequest", value: browser.webRequest },
+    { name: "webNavigation", value: browser.webNavigation },
+  ];
+
+  permissions.forEach(({ name, value }) => {
+    if (typeof value === "undefined") {
+      throw new Error(`No "${name}" permission declared in manifest.json.`);
+    }
+  });
+}
+
 async function createWindow(options, useTab) {
   if (browser.windows && !useTab) {
     return await browser.windows.create(options);
@@ -46,6 +61,9 @@ async function launchWebAuthFlow({
   alwaysUseTab = false,
   windowOptions
 }) {
+
+	checkManifestPermissions();
+
   const wInfo = await createWindow({
     type: "popup",
     url,
