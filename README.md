@@ -14,7 +14,6 @@ npm install webext-launch-web-auth-flow
 
 ```js
 const launchWebAuthFlow = require("webext-launch-web-auth-flow");
-
 ```
 
 ### Pre-built dist
@@ -29,6 +28,17 @@ Why
 
 Permission
 -----------
+
+```js
+{
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "webNavigation",
+    "https://my.redirect.uri/*"
+  ]
+}
+```
 
 To polyfill `launchWebAuthFlow`, this library uses following API/permissions:
 
