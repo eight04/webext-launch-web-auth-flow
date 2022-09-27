@@ -18,10 +18,6 @@ import launchWebAuthFlow from "webext-launch-web-auth-flow";
 const launchWebAuthFlow = require("webext-launch-web-auth-flow");
 ```
 
-```js
-import launchWebAuthFlow from "webext-launch-web-auth-flow";
-```
-
 ### Pre-built dist
 
 You can find it under the `dist` folder, or [download from unpkg](https://unpkg.com/webext-launch-web-auth-flow/dist/).
