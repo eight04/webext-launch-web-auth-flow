@@ -11,6 +11,14 @@ npm install webext-launch-web-auth-flow
 ```
 
 ```js
+// With ESM Modules
+import launchWebAuthFlow from "webext-launch-web-auth-flow";
+
+// With CommonJS
+const launchWebAuthFlow = require("webext-launch-web-auth-flow");
+```
+
+```js
 import launchWebAuthFlow from "webext-launch-web-auth-flow";
 ```
 
@@ -43,7 +51,7 @@ You can find it under the `dist` folder, or [download from unpkg](https://unpkg.
 To polyfill `launchWebAuthFlow`, this library uses following API/permissions:
 
 1. `windows` and `tabs` - this library launches a window dialog (or tab in Firefox android) to login. Most methods from these APIs can be used without explicitly declaring any permissions in the extension's manifest file, therefore there's no need to mention them in the code above.
-2. `webRequest` - this library cannot be used with non-persistent background pages, otherwise you'll get an error. To avoid this, set your background page `persistent` key to `true`.
+2. `webRequest` - this library cannot be used with event pages, otherwise you'll get [this error](https://stackoverflow.com/questions/13326105/using-webrequest-api-with-event-page). To avoid it, set your background page `persistent` key to `true`.
 3. `webRequestBlocking` this cancels the request to `redirect_uri` so it won't leak the token/code to `redirect_uri` (or `redirect_uri` is unresolveable e.g. the URL from `identity.getRedirectURL`).
 4. `webNavigation` - the login dialog is minimized unless there is no redirect. It checks the loading state using `webNavigation.onDOMContentLoaded`.
 
