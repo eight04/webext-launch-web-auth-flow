@@ -1,27 +1,12 @@
-export = launchWebAuthFlow;
+type WebAuthFlowOptions = import('webextension-polyfill').Identity.LaunchWebAuthFlowDetailsType;
+type WindowOptions = import('webextension-polyfill').Windows.CreateCreateDataType
 
-declare function launchWebAuthFlow(options: WebAuthFlowOptions): ResponseUrl;
-
-interface WebAuthFlowOptions {
-  url: string,
+interface WebAuthFlowPolyfillOptions extends WebAuthFlowOptions {
   redirect_uri: string,
-  interactive?: boolean,
   alwaysUseTab?: boolean,
-  windowOptions?: {
-    allowScriptsToClose?: boolean;
-    cookieStoreId?: number;
-    focused?: boolean;
-    height?: number;
-    incognito?: boolean;
-    left?: number;
-    state?: "normal" | "minimized" | "maximized" | "fullscreen" | "docked";
-    tabId?: number;
-    titlePreface?: string;
-    top?: number;
-    type?: "normal" | "popup" | "panel" | "detached_panel";
-    url?: string | string[];
-    width?: number;
-  }
+  windowOptions?: WindowOptions,
 }
 
-type ResponseUrl = string;
+declare function launchWebAuthFlow(options: WebAuthFlowPolyfillOptions): Promise<string>;
+
+export = launchWebAuthFlow;
