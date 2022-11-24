@@ -26,7 +26,8 @@
   },
   "repository": "eight04/webext-launch-web-auth-flow",
   "files": [
-    "dist"
+    "dist",
+    "**/*.ts"
   ],
   "main": "index.js",
   "types": "index.d.ts"
