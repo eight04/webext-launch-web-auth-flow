@@ -89,6 +89,10 @@ Use `windowOptions` to set extra properties that will be sent to [`browser.windo
 
 ## Changelog
 
+- 0.1.2 (Nov 28, 2022)
+
+  - Add: TypeScript declaration file.
+
 - 0.1.1 (Feb 18, 2021)
   - Add: `alwaysUseTab` option.
   - Add: `windowOptions` option.
