@@ -1,23 +1,25 @@
 {
-	"env": {
-		"es6": true,
-		"node": true
-	},
-	"rules": {
-		"no-use-before-define": [2, "nofunc"],
-		"semi": [2, "always"],
-    "no-console": [2, {"allow": ["error", "warn"]}]
-	},
-	"extends": [
-		"eslint:recommended"
-	],
-  "parserOptions": {
-    "ecmaVersion": 2020
+  "env": { "es6": true, "node": true },
+  "rules": {
+    "no-use-before-define": [2, "nofunc"],
+    "semi": [2, "always"],
+    "no-console": [2, { "allow": ["error", "warn"] }]
   },
-	"overrides": [{
-		"files": ["**/rollup.config.js"],
-		"parserOptions": {
-			"sourceType": "module"
-		}
-	}]	
+  "extends": ["eslint:recommended"],
+  "parserOptions": { "ecmaVersion": 2020 },
+  "overrides": [
+    {
+      "files": ["**/rollup.config.js"],
+      "parserOptions": { "sourceType": "module" }
+    },
+    {
+      "files": ["**/*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint"],
+      "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+      ]
+    }
+  ]
 }

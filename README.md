@@ -18,6 +18,12 @@ import launchWebAuthFlow from "webext-launch-web-auth-flow";
 const launchWebAuthFlow = require("webext-launch-web-auth-flow");
 ```
 
+If you use TypeScript, you have to install `@types/webextension-polyfill`:
+
+```bash
+npm install @types/webextension-polyfill
+```
+
 ### Pre-built dist
 
 You can find it under the `dist` folder, or [download from unpkg](https://unpkg.com/webext-launch-web-auth-flow/dist/).
@@ -32,8 +38,8 @@ You can find it under the `dist` folder, or [download from unpkg](https://unpkg.
 ```js
 {
  "background": {
-  ...
-  "persistent": true
+    ...
+    "persistent": true
   },
   "permissions": [
     "webRequest",
@@ -66,7 +72,7 @@ This module exports a single function.
 ### webextLaunchWebAuthFlow
 
 ```js
-launchWebAuthFlow({
+async launchWebAuthFlow({
   url: String,
   redirect_uri: String,
   interactive?: Boolean = false,
