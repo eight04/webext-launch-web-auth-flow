@@ -1,5 +1,3 @@
-/* eslint-env webextensions */
-
 async function createWindow(options, useTab) {
   if (browser.windows && !useTab) {
     return await browser.windows.create(options);
