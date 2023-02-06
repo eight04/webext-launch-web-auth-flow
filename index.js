@@ -59,7 +59,7 @@ async function launchWebAuthFlow({
   const tabId = wInfo.tabs[0].id;
   const {promise, resolve, reject} = defer();
   browser.webRequest.onBeforeRequest.addListener(onBeforeRequest, {
-    urls: ["*://*/*"],
+    urls: [`${redirect_uri}*`],
     tabId,
     types: ["main_frame"]
   }, ["blocking"]);
@@ -72,8 +72,6 @@ async function launchWebAuthFlow({
   }
   
   function onBeforeRequest(details) {
-    if (details.frameId || details.tabId !== tabId) return;
-    if (!details.url.startsWith(redirect_uri)) return;
     resolve(details.url);
     return {cancel: true};
   }
