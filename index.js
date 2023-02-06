@@ -2,7 +2,7 @@
 
 async function createWindow(options, useTab) {
   if (browser.windows && !useTab) {
-    return await browser.windows.create(options);
+    return browser.windows.create(options);
   }
   const tabOptions = {
     active: options.state !== "minimized",
@@ -16,18 +16,18 @@ async function createWindow(options, useTab) {
 
 async function updateWindow(windowId, tabId, options) {
   if (windowId) {
-    return await browser.windows.update(windowId, options);
+    return browser.windows.update(windowId, options);
   }
-  return await browser.tabs.update(tabId, {
+  return browser.tabs.update(tabId, {
     active: options.focused
   });
 }
 
 async function closeWindow(windowId, tabId) {
   if (windowId) {
-    return await browser.windows.remove(windowId);
+    return browser.windows.remove(windowId);
   }
-  return await browser.tabs.remove(tabId);
+  return browser.tabs.remove(tabId);
 }
 
 function defer() {

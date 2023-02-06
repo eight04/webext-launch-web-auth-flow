@@ -3,7 +3,8 @@
   "rules": {
     "no-use-before-define": [2, "nofunc"],
     "semi": [2, "always"],
-    "no-console": [2, { "allow": ["error", "warn"] }]
+    "no-console": [2, { "allow": ["error", "warn"] }],
+    "no-return-await": [2]
   },
   "extends": ["eslint:recommended"],
   "parserOptions": { "ecmaVersion": 2020 },
