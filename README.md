@@ -33,6 +33,25 @@ You can find it under the `dist` folder, or [download from unpkg](https://unpkg.
 1. Builtin `launchWebAuthFlow` doesn't reuse the browser session. This library does.
 2. Builtin `launchWebAuthFlow` doesn't allow custom redirect_uri. This library does.
 
+
+### Manifest V3 Support
+
+In Manifest V3, `webRequestBlocking` is not available. This library automatically supports Manifest V3 by falling back to non-blocking listeners (`browser.webNavigation.onBeforeNavigate`, `browser.webNavigation.onCommitted`, and `browser.tabs.onUpdated`) to capture the authentication redirect URL without requiring the deprecated `webRequestBlocking` permission.
+
+For MV3 extension manifests:
+```json
+{
+  "manifest_version": 3,
+  "permissions": [
+    "tabs",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "https://my.redirect.uri/*"
+  ]
+}
+```
+
 ## Permissions
 
 ```js

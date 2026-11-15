@@ -58,26 +58,85 @@ async function launchWebAuthFlow({
   const windowId = wInfo.id;
   const tabId = wInfo.tabs[0].id;
   const {promise, resolve, reject} = defer();
-  browser.webRequest.onBeforeRequest.addListener(onBeforeRequest, {
-    urls: ["*://*/*"],
-    tabId,
-    types: ["main_frame"]
-  }, ["blocking"]);
+
+  // Try blocking webRequest (MV2). In MV3 or environments without webRequestBlocking,
+  // gracefully fall back to webNavigation and tabs.onUpdated.
+  let hasWebRequest = false;
+  if (browser.webRequest && browser.webRequest.onBeforeRequest) {
+    try {
+      browser.webRequest.onBeforeRequest.addListener(onBeforeRequest, {
+        urls: ["*://*/*"],
+        tabId,
+        types: ["main_frame"]
+      }, ["blocking"]);
+      hasWebRequest = true;
+    } catch {
+      // Manifest V3 does not permit 'blocking' extraInfoSpec; fallback to non-blocking listeners
+      try {
+        browser.webRequest.onBeforeRequest.addListener(onBeforeRequest, {
+          urls: ["*://*/*"],
+          tabId,
+          types: ["main_frame"]
+        });
+        hasWebRequest = true;
+      } catch {
+        // webRequest permission not granted in MV3
+      }
+    }
+  }
+
+  // MV3 non-blocking listeners: intercept redirect via webNavigation and tabs.onUpdated
+  if (browser.webNavigation && browser.webNavigation.onBeforeNavigate) {
+    browser.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate);
+  }
+  if (browser.webNavigation && browser.webNavigation.onCommitted) {
+    browser.webNavigation.onCommitted.addListener(onCommitted);
+  }
+  if (browser.tabs && browser.tabs.onUpdated) {
+    browser.tabs.onUpdated.addListener(onTabUpdated);
+  }
+
   browser.webNavigation.onDOMContentLoaded.addListener(onDOMContentLoaded);
   browser.tabs.onRemoved.addListener(onTabRemoved);
+
   try {
     return await promise;
   } finally {
     cleanup();
   }
-  
+
+  function handleRedirectUrl(destUrl) {
+    if (destUrl && destUrl.startsWith(redirect_uri)) {
+      resolve(destUrl);
+      return true;
+    }
+    return false;
+  }
+
   function onBeforeRequest(details) {
     if (details.frameId || details.tabId !== tabId) return;
-    if (!details.url.startsWith(redirect_uri)) return;
-    resolve(details.url);
-    return {cancel: true};
+    if (handleRedirectUrl(details.url)) {
+      return {cancel: true};
+    }
   }
-  
+
+  function onBeforeNavigate(details) {
+    if (details.frameId || details.tabId !== tabId) return;
+    handleRedirectUrl(details.url);
+  }
+
+  function onCommitted(details) {
+    if (details.frameId || details.tabId !== tabId) return;
+    handleRedirectUrl(details.url);
+  }
+
+  function onTabUpdated(updatedTabId, changeInfo) {
+    if (updatedTabId !== tabId) return;
+    if (changeInfo.url) {
+      handleRedirectUrl(changeInfo.url);
+    }
+  }
+
   function onDOMContentLoaded(details) {
     if (details.frameId || details.tabId !== tabId) return;
     if (interactive) {
@@ -87,17 +146,44 @@ async function launchWebAuthFlow({
     }
     browser.webNavigation.onDOMContentLoaded.removeListener(onDOMContentLoaded);
   }
-  
+
   function onTabRemoved(removedTabId) {
     if (removedTabId === tabId) {
       reject(new Error("Canceled by user"));
     }
   }
-  
+
   function cleanup() {
-    browser.webRequest.onBeforeRequest.removeListener(onBeforeRequest);
-    browser.webNavigation.onDOMContentLoaded.removeListener(onDOMContentLoaded);
-    browser.tabs.onRemoved.removeListener(onTabRemoved);
+    if (hasWebRequest && browser.webRequest && browser.webRequest.onBeforeRequest) {
+      try {
+        browser.webRequest.onBeforeRequest.removeListener(onBeforeRequest);
+      } catch {}
+    }
+    if (browser.webNavigation && browser.webNavigation.onBeforeNavigate) {
+      try {
+        browser.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate);
+      } catch {}
+    }
+    if (browser.webNavigation && browser.webNavigation.onCommitted) {
+      try {
+        browser.webNavigation.onCommitted.removeListener(onCommitted);
+      } catch {}
+    }
+    if (browser.tabs && browser.tabs.onUpdated) {
+      try {
+        browser.tabs.onUpdated.removeListener(onTabUpdated);
+      } catch {}
+    }
+    if (browser.webNavigation && browser.webNavigation.onDOMContentLoaded) {
+      try {
+        browser.webNavigation.onDOMContentLoaded.removeListener(onDOMContentLoaded);
+      } catch {}
+    }
+    if (browser.tabs && browser.tabs.onRemoved) {
+      try {
+        browser.tabs.onRemoved.removeListener(onTabRemoved);
+      } catch {}
+    }
     closeWindow(windowId, tabId).catch(err => console.error(err));
   }
 }
